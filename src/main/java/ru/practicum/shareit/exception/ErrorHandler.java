@@ -12,21 +12,21 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 public class ErrorHandler {
     @ExceptionHandler(NotFoundException.class)
     @ResponseStatus(HttpStatus.NOT_FOUND)
-    public ErrorResponse NotFoundHandler(Exception e) {
+    public ErrorResponse notFoundHandler(Exception e) {
         log.error(e.getMessage());
         return new ErrorResponse(e.getMessage());
     }
 
     @ExceptionHandler(MethodArgumentNotValidException.class)
     @ResponseStatus(HttpStatus.BAD_REQUEST)
-    public ErrorResponse ValidationHandler(Exception e) {
+    public ErrorResponse validationHandler(Exception e) {
         log.error(e.getMessage());
         return new ErrorResponse(e.getMessage());
     }
 
     @ExceptionHandler(DataIntegrityConflictException.class)
     @ResponseStatus(HttpStatus.CONFLICT)
-    public ErrorResponse ConflictHandler(Exception e) {
+    public ErrorResponse conflictHandler(Exception e) {
         log.error(e.getMessage());
         return new ErrorResponse(e.getMessage());
     }
