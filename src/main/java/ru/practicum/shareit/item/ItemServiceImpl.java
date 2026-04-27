@@ -16,7 +16,7 @@ import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
-public class ItemServiceImpl implements ItemService{
+public class ItemServiceImpl implements ItemService {
     private final ItemRepository repository;
     private final UserRepository userRepository;
 
@@ -41,18 +41,18 @@ public class ItemServiceImpl implements ItemService{
     }
 
     public ItemDto findById(Long itemId) {
-            Optional<Item> itemOptional = repository.findById(itemId);
+        Optional<Item> itemOptional = repository.findById(itemId);
 
-            if (itemOptional.isEmpty()) {
-                throw new NotFoundException(String.format("Предмет с id=%d не найден", itemId));
-            } else {
-                Item item = itemOptional.get();
+        if (itemOptional.isEmpty()) {
+            throw new NotFoundException(String.format("Предмет с id=%d не найден", itemId));
+        } else {
+            Item item = itemOptional.get();
 
-                return ItemMapper.mapToDto(item);
-            }
+            return ItemMapper.mapToDto(item);
+        }
     }
 
-    public List<ItemDto> findAllByUserId(Long userId){
+    public List<ItemDto> findAllByUserId(Long userId) {
         checkUserExistence(userId);
 
         List<Item> items = repository.findAllByUserId(userId);
@@ -62,8 +62,8 @@ public class ItemServiceImpl implements ItemService{
                 .toList();
     }
 
-    public List<ItemDto> search(String text){
-        if (text.isBlank()){
+    public List<ItemDto> search(String text) {
+        if (text.isBlank()) {
             return Collections.emptyList();
         }
 
@@ -80,7 +80,7 @@ public class ItemServiceImpl implements ItemService{
         }
     }
 
-    private void checkUpdateability(Long itemId, Long userId){
+    private void checkUpdateability(Long itemId, Long userId) {
         Item oldItem = repository.findById(itemId).orElseThrow(() -> new NotFoundException(String.format("Предмет с id=%d не найден", itemId)));
 
         if (!oldItem.getUserId().equals(userId)) {

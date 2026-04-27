@@ -29,28 +29,28 @@ public class UserController {
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    public UserDto create(@RequestBody @Valid UserDtoCreateRequest createRequest){
+    public UserDto create(@RequestBody @Valid UserDtoCreateRequest createRequest) {
         return userService.create(createRequest);
     }
 
     @PatchMapping("/{userId}")
-    public UserDto update(@PathVariable @Positive Long userId, @RequestBody @Valid UserDtoUpdateRequest updateRequest){
+    public UserDto update(@PathVariable @Positive Long userId, @RequestBody @Valid UserDtoUpdateRequest updateRequest) {
         return userService.update(userId, updateRequest);
     }
 
     @DeleteMapping("/{userId}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    public void delete(@PathVariable Long userId){
+    public void delete(@PathVariable Long userId) {
         userService.deleteById(userId);
     }
 
     @GetMapping(("/{userId}"))
-    public UserDto findById(@PathVariable Long userId){
+    public UserDto findById(@PathVariable Long userId) {
         return userService.findById(userId);
     }
 
     @GetMapping
-    public List<UserDto> findAll(){
+    public List<UserDto> findAll() {
         return userService.findAll();
     }
 }
