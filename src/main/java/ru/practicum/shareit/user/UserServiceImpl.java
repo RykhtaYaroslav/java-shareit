@@ -7,7 +7,6 @@ import ru.practicum.shareit.exception.NotFoundException;
 import ru.practicum.shareit.user.dto.UserDto;
 import ru.practicum.shareit.user.dto.UserDtoCreateRequest;
 import ru.practicum.shareit.user.dto.UserDtoUpdateRequest;
-import ru.practicum.shareit.user.dto.mapper.UserMapper;
 
 import java.util.List;
 import java.util.Optional;

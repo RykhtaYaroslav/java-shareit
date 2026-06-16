@@ -86,7 +86,7 @@ public class ItemServiceImpl implements ItemService {
         }
     }
 
-    private void updateItemFields(Item oldItem, ItemDtoUpdateRequest request, Long userId, Long itemId){
+    private void updateItemFields(Item oldItem, ItemDtoUpdateRequest request, Long userId, Long itemId) {
         if (!oldItem.getOwnerId().equals(userId)) {
             throw new NotFoundException(String.format("У пользователя с id=%d нет доступа к редактированию предмета с id=%d", userId, itemId));
         }
