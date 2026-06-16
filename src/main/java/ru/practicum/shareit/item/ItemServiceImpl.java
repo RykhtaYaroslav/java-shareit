@@ -6,7 +6,6 @@ import ru.practicum.shareit.exception.NotFoundException;
 import ru.practicum.shareit.item.dto.ItemDto;
 import ru.practicum.shareit.item.dto.ItemDtoCreateRequest;
 import ru.practicum.shareit.item.dto.ItemDtoUpdateRequest;
-import ru.practicum.shareit.item.dto.mapper.ItemMapper;
 import ru.practicum.shareit.item.model.Item;
 import ru.practicum.shareit.user.UserRepository;
 
@@ -23,21 +22,21 @@ public class ItemServiceImpl implements ItemService {
     public ItemDto create(Long userId, ItemDtoCreateRequest request) {
         checkUserExistence(userId);
 
-        Item itemRequest = ItemMapper.mapToModel(userId, request);
+        Item itemRequest = ItemDtoCreateRequest.mapToModel(userId, request);
 
         Item item = repository.create(itemRequest);
-        return ItemMapper.mapToDto(item);
+        return ItemDto.mapToDto(item);
     }
 
     public ItemDto update(Long userId, Long itemId, ItemDtoUpdateRequest request) {
         checkUserExistence(userId);
 
-        Item itemRequest = ItemMapper.mapToModel(itemId, userId, request);
+        Item itemRequest = ItemDtoUpdateRequest.mapToModel(itemId, userId, request);
 
         checkUpdateability(itemId, userId);
 
         Item item = repository.update(itemRequest);
-        return ItemMapper.mapToDto(item);
+        return ItemDto.mapToDto(item);
     }
 
     public ItemDto findById(Long itemId) {
@@ -48,7 +47,7 @@ public class ItemServiceImpl implements ItemService {
         } else {
             Item item = itemOptional.get();
 
-            return ItemMapper.mapToDto(item);
+            return ItemDto.mapToDto(item);
         }
     }
 
@@ -58,7 +57,7 @@ public class ItemServiceImpl implements ItemService {
         List<Item> items = repository.findAllByUserId(userId);
 
         return items.stream()
-                .map(ItemMapper::mapToDto)
+                .map(ItemDto::mapToDto)
                 .toList();
     }
 
@@ -70,7 +69,7 @@ public class ItemServiceImpl implements ItemService {
         List<Item> items = repository.search(text);
 
         return items.stream()
-                .map(ItemMapper::mapToDto)
+                .map(ItemDto::mapToDto)
                 .toList();
     }
 

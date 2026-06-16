@@ -21,11 +21,10 @@ public class UserServiceImpl implements UserService {
     public UserDto create(UserDtoCreateRequest createRequest) {
         checkEmailAvailability(createRequest.getEmail());
 
-        User toCreate = UserMapper.mapToModel(createRequest);
+        User forSave = UserMapper.mapToModel(createRequest);
 
-        Long id = userRepository.create(toCreate);
-        toCreate.setId(id);
-        return UserMapper.mapToDto(toCreate);
+        User saved = userRepository.save(forSave);
+        return UserMapper.mapToDto(saved);
     }
 
     @Override
@@ -35,8 +34,8 @@ public class UserServiceImpl implements UserService {
 
         User toUpdate = UserMapper.mapToModel(userId, updateRequest);
 
-        User user = userRepository.update(userId, toUpdate);
-        return UserMapper.mapToDto(user);
+        User updated = userRepository.save(toUpdate);
+        return UserMapper.mapToDto(updated);
     }
 
     @Override
@@ -67,7 +66,7 @@ public class UserServiceImpl implements UserService {
     }
 
     private void checkEmailAvailability(String email) {
-        if (!userRepository.isUniqueEmail(email)) {
+        if (userRepository.findByEmail(email).isPresent()) {
             throw new DataIntegrityConflictException(String.format("Email %s уже занят", email));
         }
     }
