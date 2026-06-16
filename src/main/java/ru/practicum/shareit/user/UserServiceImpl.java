@@ -28,10 +28,17 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public UserDto update(Long userId, UserDtoUpdateRequest updateRequest) {
-        checkUserExistence(userId);
-        checkEmailAvailability(updateRequest.getEmail());
+        Optional<User> userOptional = userRepository.findById(userId);
+
+        if (userOptional.isEmpty()) {
+            throw new NotFoundException(String.format("Пользователь с id=%d не найден", userId));
+        }
+
+        User user = userOptional.get();
 
         User toUpdate = UserDtoUpdateRequest.mapToModel(userId, updateRequest);
+
+        updateUserFields(user, toUpdate);
 
         User updated = userRepository.save(toUpdate);
         return UserDto.mapToDto(updated);
@@ -58,15 +65,22 @@ public class UserServiceImpl implements UserService {
         return users.stream().map(UserDto::mapToDto).toList();
     }
 
-    private void checkUserExistence(Long userId) {
-        if (userRepository.findById(userId).isEmpty()) {
-            throw new NotFoundException(String.format("Пользователь с id=%d не найден", userId));
-        }
-    }
-
     private void checkEmailAvailability(String email) {
         if (userRepository.findByEmail(email).isPresent()) {
             throw new DataIntegrityConflictException(String.format("Email %s уже занят", email));
+        }
+    }
+
+    private void updateUserFields(User user, User updateRequest) {
+        if (updateRequest.getName() != null) {
+            user.setName(updateRequest.getName());
+        }
+
+        String email = updateRequest.getEmail();
+
+        if (email != null) {
+            checkEmailAvailability(email);
+            user.setEmail(email);
         }
     }
 }
