@@ -21,10 +21,10 @@ public class UserServiceImpl implements UserService {
     public UserDto create(UserDtoCreateRequest createRequest) {
         checkEmailAvailability(createRequest.getEmail());
 
-        User forSave = UserMapper.mapToModel(createRequest);
+        User forSave = UserDtoCreateRequest.mapToModel(createRequest);
 
         User saved = userRepository.save(forSave);
-        return UserMapper.mapToDto(saved);
+        return UserDto.mapToDto(saved);
     }
 
     @Override
@@ -32,10 +32,10 @@ public class UserServiceImpl implements UserService {
         checkUserExistence(userId);
         checkEmailAvailability(updateRequest.getEmail());
 
-        User toUpdate = UserMapper.mapToModel(userId, updateRequest);
+        User toUpdate = UserDtoUpdateRequest.mapToModel(userId, updateRequest);
 
         User updated = userRepository.save(toUpdate);
-        return UserMapper.mapToDto(updated);
+        return UserDto.mapToDto(updated);
     }
 
     @Override
@@ -50,13 +50,13 @@ public class UserServiceImpl implements UserService {
         if (user.isEmpty()) {
             throw new NotFoundException(String.format("Пользователь с id=%d не найден", userId));
         }
-        return UserMapper.mapToDto(user.get());
+        return UserDto.mapToDto(user.get());
     }
 
     @Override
     public List<UserDto> findAll() {
         List<User> users = userRepository.findAll();
-        return users.stream().map(UserMapper::mapToDto).toList();
+        return users.stream().map(UserDto::mapToDto).toList();
     }
 
     private void checkUserExistence(Long userId) {
