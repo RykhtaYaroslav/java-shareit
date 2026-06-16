@@ -25,7 +25,7 @@ public class Item {
     private Long id;
 
     @Column(name = "owner_id")
-    private Long userId;
+    private Long ownerId;
 
     private String name;
     private String description;

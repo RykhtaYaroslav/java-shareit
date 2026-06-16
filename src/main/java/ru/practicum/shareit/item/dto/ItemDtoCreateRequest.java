@@ -18,7 +18,7 @@ public class ItemDtoCreateRequest {
 
     public static Item mapToModel(Long userId, ItemDtoCreateRequest request) {
         return Item.builder()
-                .userId(userId)
+                .ownerId(userId)
                 .name(request.getName())
                 .description(request.getDescription())
                 .available(request.getAvailable())

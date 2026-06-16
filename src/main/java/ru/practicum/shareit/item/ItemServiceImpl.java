@@ -35,9 +35,11 @@ public class ItemServiceImpl implements ItemService {
 
         Item itemRequest = ItemDtoUpdateRequest.mapToModel(itemId, userId, request);
 
-        checkUpdateability(itemId, userId);
+        Item item = repository.findById(itemId).orElseThrow(() -> new NotFoundException(String.format("Предмет с id=%d не найден", itemId)));
 
-        Item item = repository.save(itemRequest);
+        updateItemFields(item, request, userId, itemId);
+
+        repository.save(itemRequest);
         return ItemDto.mapToDto(item);
     }
 
@@ -84,11 +86,19 @@ public class ItemServiceImpl implements ItemService {
         }
     }
 
-    private void checkUpdateability(Long itemId, Long userId) {
-        Item oldItem = repository.findById(itemId).orElseThrow(() -> new NotFoundException(String.format("Предмет с id=%d не найден", itemId)));
-
-        if (!oldItem.getUserId().equals(userId)) {
+    private void updateItemFields(Item oldItem, ItemDtoUpdateRequest request, Long userId, Long itemId){
+        if (!oldItem.getOwnerId().equals(userId)) {
             throw new NotFoundException(String.format("У пользователя с id=%d нет доступа к редактированию предмета с id=%d", userId, itemId));
+        }
+
+        if (request.getName() != null) {
+            oldItem.setName(request.getName());
+        }
+        if (request.getDescription() != null) {
+            oldItem.setDescription(request.getDescription());
+        }
+        if (request.getAvailable() != null) {
+            oldItem.setAvailable(request.getAvailable());
         }
     }
 }
