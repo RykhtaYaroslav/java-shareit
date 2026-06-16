@@ -19,15 +19,17 @@ public class ItemServiceImpl implements ItemService {
     private final ItemRepository repository;
     private final UserRepository userRepository;
 
+    @Override
     public ItemDto create(Long userId, ItemDtoCreateRequest request) {
         checkUserExistence(userId);
 
         Item itemRequest = ItemDtoCreateRequest.mapToModel(userId, request);
 
-        Item item = repository.create(itemRequest);
+        Item item = repository.save(itemRequest);
         return ItemDto.mapToDto(item);
     }
 
+    @Override
     public ItemDto update(Long userId, Long itemId, ItemDtoUpdateRequest request) {
         checkUserExistence(userId);
 
@@ -35,10 +37,11 @@ public class ItemServiceImpl implements ItemService {
 
         checkUpdateability(itemId, userId);
 
-        Item item = repository.update(itemRequest);
+        Item item = repository.save(itemRequest);
         return ItemDto.mapToDto(item);
     }
 
+    @Override
     public ItemDto findById(Long itemId) {
         Optional<Item> itemOptional = repository.findById(itemId);
 
@@ -51,6 +54,7 @@ public class ItemServiceImpl implements ItemService {
         }
     }
 
+    @Override
     public List<ItemDto> findAllByUserId(Long userId) {
         checkUserExistence(userId);
 
@@ -61,12 +65,13 @@ public class ItemServiceImpl implements ItemService {
                 .toList();
     }
 
-    public List<ItemDto> search(String text) {
+    @Override
+    public List<ItemDto> searchByNameOrDescription(String text) {
         if (text.isBlank()) {
             return Collections.emptyList();
         }
 
-        List<Item> items = repository.search(text);
+        List<Item> items = repository.findAllByNameOrDescriptionContainingIgnoreCase(text);
 
         return items.stream()
                 .map(ItemDto::mapToDto)

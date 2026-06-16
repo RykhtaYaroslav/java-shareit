@@ -46,8 +46,8 @@ public class ItemController {
         return itemService.findAllByUserId(userId);
     }
 
-    @GetMapping("/search")
+    @GetMapping("/findAllByNameOrDescriptionContainingIgnoreCase")
     public List<ItemDto> search(@RequestParam String text) {
-        return itemService.search(text);
+        return itemService.searchByNameOrDescription(text);
     }
 }
