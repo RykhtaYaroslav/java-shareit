@@ -6,7 +6,7 @@ import ru.practicum.shareit.item.model.Item;
 import java.util.List;
 
 public interface ItemRepository extends JpaRepository<Item, Long> {
-    List<Item> findAllByUserId(Long userId);
+    List<Item> findAllByOwnerId(Long userId);
 
     List<Item> findAllByNameOrDescriptionContainingIgnoreCase(String text);
 }
