@@ -75,6 +75,20 @@ public class BookingServiceImpl implements BookingService {
     }
 
     @Override
+    public BookingDto getBookingById(Long userId, Long bookingId) {
+        Booking booking = bookingRepository.findById(bookingId)
+                .orElseThrow(() -> new NotFoundException(String.format("Бронирование с id=%d не найдено", bookingId)));
+
+        if (!booking.getItem().getOwnerId().equals(userId) || !booking.getBooker().getId().equals(userId)) {
+            throw new NotFoundException(String.format(
+                    "Пользователь с id=%d не является владельцем вещи или автором бронирования с id = %d. Доступ к бронированию ограничен",
+                    userId, booking.getId()));
+        }
+
+        return BookingDto.mapToDto(booking);
+    }
+
+    @Override
     public void delete(Long id) {
 
     }

@@ -13,5 +13,7 @@ public interface BookingService {
 
     BookingDto approve(Long userId, Long bookingId, Boolean approved);
 
+    BookingDto getBookingById(Long userId, Long bookingId);
+
     void delete(Long id);
 }
