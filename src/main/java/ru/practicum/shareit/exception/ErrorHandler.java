@@ -11,7 +11,8 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 @Slf4j
 public class ErrorHandler {
 
-    /**TODO
+    /**
+     * TODO
      *  NotAvailableException возвращают статус HttpStatus.BAD_REQUEST
      */
 

@@ -22,7 +22,7 @@ public class BookingRequestDto {
     @FutureOrPresent(message = "Дата окончания бронирования не может быть в прошлом")
     private LocalDateTime end;
 
-    public static Booking mapToModel (BookingRequestDto bookingRequestDto){
+    public static Booking mapToModel(BookingRequestDto bookingRequestDto) {
         return Booking.builder()
                 .id(bookingRequestDto.getItemId())
                 .startDate(bookingRequestDto.getStart())
