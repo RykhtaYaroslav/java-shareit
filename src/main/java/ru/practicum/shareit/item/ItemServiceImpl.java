@@ -62,7 +62,7 @@ public class ItemServiceImpl implements ItemService {
     public List<ItemDto> findAllByOwnerId(Long userId) {
         checkUserExistence(userId);
 
-        List<Item> items = repository.findAllByOwnerId(userId);
+        List<Item> items = repository.findAllByOwnerIdOrderByIdAsc(userId);
 
         return items.stream()
                 .map(ItemDto::mapToDto)
