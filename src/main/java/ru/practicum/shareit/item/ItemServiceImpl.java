@@ -3,6 +3,8 @@ package ru.practicum.shareit.item;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import ru.practicum.shareit.booking.BookingRepository;
+import ru.practicum.shareit.booking.model.Booking;
 import ru.practicum.shareit.exception.NotFoundException;
 import ru.practicum.shareit.item.dto.ItemDto;
 import ru.practicum.shareit.item.dto.ItemDtoCreateRequest;
@@ -10,16 +12,20 @@ import ru.practicum.shareit.item.dto.ItemDtoUpdateRequest;
 import ru.practicum.shareit.item.model.Item;
 import ru.practicum.shareit.user.UserRepository;
 
+import java.time.LocalDateTime;
 import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
 @Transactional
 public class ItemServiceImpl implements ItemService {
-    private final ItemRepository repository;
+    private final ItemRepository itemRepository;
     private final UserRepository userRepository;
+    private final BookingRepository bookingRepository;
 
     @Override
     public ItemDto create(Long userId, ItemDtoCreateRequest request) {
@@ -27,7 +33,7 @@ public class ItemServiceImpl implements ItemService {
 
         Item itemRequest = ItemDtoCreateRequest.mapToModel(userId, request);
 
-        Item item = repository.save(itemRequest);
+        Item item = itemRepository.save(itemRequest);
         return ItemDto.mapToDto(item);
     }
 
@@ -35,19 +41,17 @@ public class ItemServiceImpl implements ItemService {
     public ItemDto update(Long userId, Long itemId, ItemDtoUpdateRequest request) {
         checkUserExistence(userId);
 
-        Item itemRequest = ItemDtoUpdateRequest.mapToModel(itemId, userId, request);
-
-        Item item = repository.findById(itemId).orElseThrow(() -> new NotFoundException(String.format("Предмет с id=%d не найден", itemId)));
+        Item item = itemRepository.findById(itemId).orElseThrow(() -> new NotFoundException(String.format("Предмет с id=%d не найден", itemId)));
 
         updateItemFields(item, request, userId, itemId);
 
-        repository.save(itemRequest);
+        itemRepository.save(item);
         return ItemDto.mapToDto(item);
     }
 
     @Override
     public ItemDto findById(Long itemId) {
-        Optional<Item> itemOptional = repository.findById(itemId);
+        Optional<Item> itemOptional = itemRepository.findById(itemId);
 
         if (itemOptional.isEmpty()) {
             throw new NotFoundException(String.format("Предмет с id=%d не найден", itemId));
@@ -62,10 +66,32 @@ public class ItemServiceImpl implements ItemService {
     public List<ItemDto> findAllByOwnerId(Long userId) {
         checkUserExistence(userId);
 
-        List<Item> items = repository.findAllByOwnerIdOrderByIdAsc(userId);
+        List<Item> items = itemRepository.findAllByOwnerIdOrderByIdAsc(userId);
+
+        List<Long> itemIds = items.stream().map(Item::getId).toList();
+
+        LocalDateTime now = LocalDateTime.now();
+
+        List<Booking> previousBookingsForItems = bookingRepository.findPreviousBookingsForItems(itemIds, now);
+        List<Booking> featureBookingsForItems = bookingRepository.findFeatureBookingsForItems(itemIds, now);
+
+        Map<Long, Booking> previousBookingsMap = previousBookingsForItems.stream().collect(Collectors.toMap(
+                booking -> booking.getItem().getId(),
+                booking -> booking,
+                (existing, replacement) -> existing));
+
+        Map<Long, Booking> featureBookingsMap = featureBookingsForItems.stream().collect(Collectors.toMap(
+                booking -> booking.getItem().getId(),
+                booking -> booking,
+                (existing, replacement) -> existing));
+
 
         return items.stream()
-                .map(ItemDto::mapToDto)
+                .map(item -> {
+                    Booking last = previousBookingsMap.getOrDefault(item.getId(), null);
+                    Booking next = featureBookingsMap.getOrDefault(item.getId(), null);
+                    return ItemDto.mapToDto(item, last, next);
+                })
                 .toList();
     }
 
@@ -75,7 +101,7 @@ public class ItemServiceImpl implements ItemService {
             return Collections.emptyList();
         }
 
-        List<Item> items = repository.findAllByNameOrDescriptionContainingIgnoreCase(text);
+        List<Item> items = itemRepository.findAllByNameOrDescriptionContainingIgnoreCase(text);
 
         return items.stream()
                 .map(ItemDto::mapToDto)
