@@ -6,6 +6,7 @@ import org.springframework.transaction.annotation.Transactional;
 import ru.practicum.shareit.booking.dto.BookingDto;
 import ru.practicum.shareit.booking.dto.BookingRequestDto;
 import ru.practicum.shareit.booking.dto.BookingUpdateDto;
+import ru.practicum.shareit.exception.IllegalBookingStateException;
 import ru.practicum.shareit.exception.NotAvailableException;
 import ru.practicum.shareit.exception.NotFoundException;
 import ru.practicum.shareit.item.ItemRepository;
@@ -15,6 +16,7 @@ import ru.practicum.shareit.user.UserRepository;
 
 import java.time.LocalDateTime;
 import java.util.List;
+
 
 @Service
 @Transactional
@@ -86,6 +88,39 @@ public class BookingServiceImpl implements BookingService {
         }
 
         return BookingDto.mapToDto(booking);
+    }
+
+    @Override
+    public List<BookingDto> getUserBookings(Long userId, String stateString) {
+        userRepository.findById(userId).orElseThrow(
+                () -> new NotFoundException(String.format("Пользователь с id=%d не найден", userId)));
+
+        BookingState state;
+
+        try {
+            state = BookingState.valueOf(stateString.toUpperCase());
+        } catch (IllegalArgumentException e) {
+            throw new IllegalBookingStateException(String.format("Unknown state: %s", stateString));
+        }
+
+        LocalDateTime now = LocalDateTime.now();
+
+        List<Booking> bookings;
+        switch (state) {
+            case ALL -> bookings = bookingRepository.findAllByBookerIdOrderByStartDateDesc(userId);
+            case CURRENT ->
+                    bookings = bookingRepository.findAllByBookerIdAndStartDateBeforeAndEndDateAfterOrderByStartDateDesc(userId, now, now);
+            case PAST ->
+                    bookings = bookingRepository.findAllByBookerIdAndEndDateBeforeOrderByStartDateDesc(userId, now);
+            case FUTURE ->
+                    bookings = bookingRepository.findAllByBookerIdAndStartDateAfterOrderByStartDateDesc(userId, now);
+            case WAITING ->
+                    bookings = bookingRepository.findAllByBookerIdAndStatusOrderByStartDateDesc(userId, BookingStatus.WAITING);
+            case REJECTED ->
+                    bookings = bookingRepository.findAllByBookerIdAndStatusOrderByStartDateDesc(userId, BookingStatus.REJECTED);
+            default -> throw new IllegalBookingStateException("Unexpected value: " + state);
+        }
+        return bookings.stream().map(BookingDto::mapToDto).toList();
     }
 
     @Override
