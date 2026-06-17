@@ -44,7 +44,12 @@ public class BookingController {
     public List<BookingDto> getUserBookings(@RequestHeader("X-Sharer-User-Id") Long userId,
                                             @RequestParam(required = false, defaultValue = "ALL") String state) {
         return bookingService.getUserBookings(userId, state);
+    }
 
+    @GetMapping(path = "/owner")
+    public List<BookingDto> getOwnerBookings(@RequestHeader("X-Sharer-User-Id") Long ownerId,
+                                             @RequestParam(required = false, defaultValue = "ALL") String state) {
+        return bookingService.getOwnerBookings(ownerId, state);
     }
 
 }

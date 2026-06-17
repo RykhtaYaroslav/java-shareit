@@ -20,4 +20,6 @@ public interface BookingService {
     List<BookingDto> getUserBookings(Long userId, String state);
 
     void delete(Long id);
+
+    List<BookingDto> getOwnerBookings(Long ownerId, String state);
 }

@@ -31,7 +31,7 @@ public class BookingServiceImpl implements BookingService {
 
     @Override
     public BookingDto create(Long userId, BookingRequestDto bookingRequestDto) {
-        User user = getBooker(userId);
+        User user = findUserById(userId);
 
         Item item = extractItem(bookingRequestDto, user);
 
@@ -51,11 +51,6 @@ public class BookingServiceImpl implements BookingService {
         booking = bookingRepository.save(booking);
 
         return BookingDto.mapToDto(booking);
-    }
-
-    @Override
-    public BookingDto update(BookingUpdateDto bookingUpdateDto) {
-        return null;
     }
 
     @Override
@@ -95,16 +90,9 @@ public class BookingServiceImpl implements BookingService {
 
     @Override
     public List<BookingDto> getUserBookings(Long userId, String stateString) {
-        userRepository.findById(userId).orElseThrow(
-                () -> new NotFoundException(String.format("Пользователь с id=%d не найден", userId)));
+        findUserById(userId);
 
-        BookingState state;
-
-        try {
-            state = BookingState.valueOf(stateString.toUpperCase());
-        } catch (IllegalArgumentException e) {
-            throw new IllegalBookingStateException(String.format("Unknown state: %s", stateString));
-        }
+        BookingState state = getState(stateString);
 
         LocalDateTime now = LocalDateTime.now();
 
@@ -127,8 +115,54 @@ public class BookingServiceImpl implements BookingService {
     }
 
     @Override
-    public void delete(Long id) {
+    public List<BookingDto> getOwnerBookings(Long ownerId, String stateString) {
+        findUserById(ownerId);
 
+        BookingState state = getState(stateString);
+
+        LocalDateTime now = LocalDateTime.now();
+
+        List<Booking> bookings;
+
+        switch (state) {
+            case ALL -> bookings = bookingRepository.findAllByItemOwnerIdOrderByStartDateDesc(ownerId);
+            case CURRENT ->
+                    bookings = bookingRepository.findAllByItemOwnerIdAndStartDateBeforeAndEndDateAfterOrderByStartDateDesc(ownerId, now, now);
+            case PAST ->
+                    bookings = bookingRepository.findAllByItemOwnerIdAndEndDateBeforeOrderByStartDateDesc(ownerId, now);
+            case FUTURE ->
+                    bookings = bookingRepository.findAllByItemOwnerIdAndStartDateAfterOrderByStartDateDesc(ownerId, now);
+            case WAITING ->
+                    bookings = bookingRepository.findAllByItemOwnerIdAndStatusOrderByStartDateDesc(ownerId, BookingStatus.WAITING);
+            case REJECTED ->
+                    bookings = bookingRepository.findAllByItemOwnerIdAndStatusOrderByStartDateDesc(ownerId, BookingStatus.REJECTED);
+            default -> throw new IllegalBookingStateException("Unexpected value: " + state);
+        }
+
+        return bookings.stream().map(BookingDto::mapToDto).toList();
+    }
+
+    @Override
+    public BookingDto update(BookingUpdateDto bookingUpdateDto) {
+        // Может быть дальше появится необходимость реализовать такой функционал
+        return null;
+    }
+
+    @Override
+    public void delete(Long id) {
+        // Может быть дальше появится необходимость реализовать такой функционал
+    }
+
+    private BookingState getState(String stateString) {
+        BookingState state;
+
+        try {
+            state = BookingState.valueOf(stateString.toUpperCase());
+        } catch (IllegalArgumentException e) {
+            throw new IllegalBookingStateException(String.format("Unknown state: %s", stateString));
+        }
+
+        return state;
     }
 
     private Item extractItem(BookingRequestDto bookingRequestDto, User user) {
@@ -148,7 +182,7 @@ public class BookingServiceImpl implements BookingService {
         return item;
     }
 
-    private User getBooker(Long userId) {
+    private User findUserById(Long userId) {
         return userRepository.findById(userId).orElseThrow(
                 () -> new NotFoundException(String.format("Пользователь с id=%d не найден", userId)));
     }
