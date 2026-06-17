@@ -15,7 +15,6 @@ import ru.practicum.shareit.user.UserRepository;
 
 import java.time.LocalDateTime;
 import java.util.List;
-import java.util.Optional;
 
 @Service
 @Transactional
@@ -27,16 +26,6 @@ public class BookingServiceImpl implements BookingService {
 
     @Override
     public BookingDto create(Long userId, BookingRequestDto bookingRequestDto) {
-        /**TODO:
-         * check user existence +
-         * check item existence +
-         * check user is not owner of item +
-         * check item availability +
-         * check booking dates +
-         * create booking with WAITING status
-         * save in repository and give back DTO
-         */
-
         User user = getBooker(userId);
 
         Item item = extractItem(bookingRequestDto, user);
@@ -65,11 +54,32 @@ public class BookingServiceImpl implements BookingService {
     }
 
     @Override
+    public BookingDto approve(Long userId, Long bookingId, Boolean approved) {
+        Booking booking = bookingRepository.findById(bookingId)
+                .orElseThrow(() -> new NotFoundException(String.format("Бронирование с id=%d не найдено", bookingId)));
+
+        if (!booking.getItem().getOwnerId().equals(userId)) {
+            throw new NotFoundException(String.format(
+                    "Пользователь с id=%d не является владельцем вещи с id=%d. Доступ к бронированию ограничен",
+                    userId, booking.getItem().getId()));
+        }
+
+        if (booking.getStatus() != BookingStatus.WAITING) {
+            throw new NotAvailableException(String.format(
+                    "Бронирование с id=%d уже обработано. Текущий статус: %s", bookingId, booking.getStatus()));
+        }
+
+        booking.setStatus(Boolean.TRUE.equals(approved) ? BookingStatus.APPROVED : BookingStatus.REJECTED);
+        bookingRepository.save(booking);
+        return BookingDto.mapToDto(booking);
+    }
+
+    @Override
     public void delete(Long id) {
 
     }
 
-    private Item extractItem(BookingRequestDto bookingRequestDto, User user){
+    private Item extractItem(BookingRequestDto bookingRequestDto, User user) {
         Item item = itemRepository.findById(bookingRequestDto.getItemId()).orElseThrow(
                 () -> new NotFoundException(String.format("Предмет с id=%d не найден", bookingRequestDto.getItemId())));
 
