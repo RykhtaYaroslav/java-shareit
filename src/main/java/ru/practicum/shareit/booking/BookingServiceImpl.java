@@ -59,7 +59,7 @@ public class BookingServiceImpl implements BookingService {
                 .orElseThrow(() -> new NotFoundException(String.format("Бронирование с id=%d не найдено", bookingId)));
 
         if (!booking.getItem().getOwnerId().equals(userId)) {
-            throw new NotFoundException(String.format(
+            throw new NotAvailableException(String.format(
                     "Пользователь с id=%d не является владельцем вещи с id=%d. Доступ к бронированию ограничен",
                     userId, booking.getItem().getId()));
         }
