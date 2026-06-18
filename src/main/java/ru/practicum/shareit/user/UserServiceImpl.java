@@ -30,13 +30,7 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public UserDto update(Long userId, UserDtoUpdateRequest updateRequest) {
-        Optional<User> userOptional = userRepository.findById(userId);
-
-        if (userOptional.isEmpty()) {
-            throw new NotFoundException(String.format("Пользователь с id=%d не найден", userId));
-        }
-
-        User user = userOptional.get();
+        User user = getUser(userId);
 
         User toUpdate = UserDtoUpdateRequest.mapToModel(userId, updateRequest);
 
@@ -65,6 +59,11 @@ public class UserServiceImpl implements UserService {
     public List<UserDto> findAll() {
         List<User> users = userRepository.findAll();
         return users.stream().map(UserDto::mapToDto).toList();
+    }
+
+    @Override
+    public User getUser(Long userId) {
+        return userRepository.findById(userId).orElseThrow(() -> new NotFoundException(String.format("Пользователь с id=%d не найден", userId)));
     }
 
     private void checkEmailAvailability(String email) {

@@ -13,6 +13,7 @@ import ru.practicum.shareit.item.model.Comment;
 import ru.practicum.shareit.item.model.Item;
 import ru.practicum.shareit.user.User;
 import ru.practicum.shareit.user.UserRepository;
+import ru.practicum.shareit.user.UserService;
 
 import java.time.LocalDateTime;
 
@@ -21,14 +22,14 @@ import java.time.LocalDateTime;
 @Transactional
 public class CommentService {
     private final CommentRepository commentRepository;
-    private final ItemRepository itemRepository;
-    private final UserRepository userRepository;
     private final BookingRepository bookingRepository;
+    private final UserService userService;
+    private final ItemService itemService;
 
     public CommentDto createComment(Long userId, Long itemId, CommentRequestDto request) {
-        Item item = getItem(itemId);
+        Item item = itemService.getItem(itemId);
 
-        User author = getUser(userId);
+        User author = userService.getUser(userId);
 
         LocalDateTime now = LocalDateTime.now();
 
@@ -44,13 +45,5 @@ public class CommentService {
             throw new NotAvailableException(String.format(
                     "Пользователь с id=%d не может оставить отзыв на вещь с id=%d, так как не арендовал её.", userId, itemId));
         }
-    }
-
-    private Item getItem(Long itemId) {
-        return itemRepository.findById(itemId).orElseThrow(() -> new NotFoundException(String.format("Предмет с id=%d не найден", itemId)));
-    }
-
-    private User getUser(Long userId) {
-        return userRepository.findById(userId).orElseThrow(() -> new NotFoundException(String.format("Пользователь с id=%d не найден", userId)));
     }
 }

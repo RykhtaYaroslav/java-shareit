@@ -121,7 +121,7 @@ public class ItemServiceImpl implements ItemService {
                 .toList();
     }
 
-    private Item getItem(Long itemId) {
+    public Item getItem(Long itemId) {
         return itemRepository.findById(itemId).orElseThrow(() -> new NotFoundException(String.format("Предмет с id=%d не найден", itemId)));
     }
 
