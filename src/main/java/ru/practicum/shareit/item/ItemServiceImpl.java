@@ -108,7 +108,7 @@ public class ItemServiceImpl implements ItemService {
             return Collections.emptyList();
         }
 
-        List<Item> items = itemRepository.findAllByNameOrDescriptionContainingIgnoreCase(text);
+        List<Item> items = itemRepository.findAllByNameContainingIgnoreCaseOrDescriptionContainingIgnoreCase(text, text);
         List<Long> itemIds = items.stream().map(Item::getId).toList();
 
         Map<Long, List<Comment>> commentsMap = getCommentsMap(itemIds);
