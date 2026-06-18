@@ -7,6 +7,9 @@ import lombok.NoArgsConstructor;
 import ru.practicum.shareit.booking.model.Booking;
 import ru.practicum.shareit.item.model.Item;
 
+import java.util.ArrayList;
+import java.util.List;
+
 @Data
 @Builder
 @AllArgsConstructor
@@ -21,6 +24,8 @@ public class ItemDto {
     private BookingShortDto lastBooking;
     private BookingShortDto nextBooking;
 
+    private List<CommentDto> comments;
+
     // Для НЕ владельцев вещи
     public static ItemDto mapToDto(Item item) {
         return ItemDto.builder()
@@ -30,11 +35,24 @@ public class ItemDto {
                 .available(item.getAvailable())
                 .lastBooking(null)
                 .nextBooking(null)
+                .comments(new ArrayList<>())
+                .build();
+    }
+
+    public static ItemDto mapToDto(Item item, List<CommentDto> commentsDto) {
+        return ItemDto.builder()
+                .id(item.getId())
+                .name(item.getName())
+                .description(item.getDescription())
+                .available(item.getAvailable())
+                .lastBooking(null)
+                .nextBooking(null)
+                .comments(commentsDto != null ? commentsDto : new ArrayList<>())
                 .build();
     }
 
     // Для владельцев
-    public static ItemDto mapToDto(Item item, Booking lastBooking, Booking nextBooking) {
+    public static ItemDto mapToDto(Item item, Booking lastBooking, Booking nextBooking, List<CommentDto> commentsDto) {
         return ItemDto.builder()
                 .id(item.getId())
                 .name(item.getName())
@@ -42,6 +60,7 @@ public class ItemDto {
                 .available(item.getAvailable())
                 .lastBooking(lastBooking != null ? BookingShortDto.mapToDto(lastBooking) : null)
                 .nextBooking(nextBooking != null ? BookingShortDto.mapToDto(nextBooking) : null)
+                .comments(commentsDto != null ? commentsDto : new ArrayList<>())
                 .build();
     }
 

@@ -6,9 +6,11 @@ import org.springframework.transaction.annotation.Transactional;
 import ru.practicum.shareit.booking.BookingRepository;
 import ru.practicum.shareit.booking.model.Booking;
 import ru.practicum.shareit.exception.NotFoundException;
+import ru.practicum.shareit.item.dto.CommentDto;
 import ru.practicum.shareit.item.dto.ItemDto;
 import ru.practicum.shareit.item.dto.ItemDtoCreateRequest;
 import ru.practicum.shareit.item.dto.ItemDtoUpdateRequest;
+import ru.practicum.shareit.item.model.Comment;
 import ru.practicum.shareit.item.model.Item;
 import ru.practicum.shareit.user.UserRepository;
 
@@ -25,6 +27,7 @@ public class ItemServiceImpl implements ItemService {
     private final ItemRepository itemRepository;
     private final UserRepository userRepository;
     private final BookingRepository bookingRepository;
+    private final CommentRepository commentRepository;
 
     @Override
     public ItemDto create(Long userId, ItemDtoCreateRequest request) {
@@ -49,10 +52,15 @@ public class ItemServiceImpl implements ItemService {
     }
 
     @Override
+    @Transactional(readOnly = true)
     public ItemDto findById(Long userId, Long itemId) {
         checkUserExistence(userId);
 
         Item item = itemRepository.findById(itemId).orElseThrow(() -> new NotFoundException(String.format("Предмет с id=%d не найден", itemId)));
+
+        List<Comment> comments = commentRepository.findAllByItemIdOrderByCreatedDesc(itemId);
+
+        List<CommentDto> commentsDto = comments.stream().map(CommentDto::mapToDto).toList();
 
         if (item.getOwnerId().equals(userId)) {
             LocalDateTime now = LocalDateTime.now();
@@ -63,56 +71,81 @@ public class ItemServiceImpl implements ItemService {
             Booking last = previousBookingsForItems.isEmpty() ? null : previousBookingsForItems.getFirst();
             Booking next = featureBookingsForItems.isEmpty() ? null : featureBookingsForItems.getFirst();
 
-            return ItemDto.mapToDto(item, last, next);
+            return ItemDto.mapToDto(item, last, next, commentsDto);
         } else {
-            return ItemDto.mapToDto(item);
+            return ItemDto.mapToDto(item, commentsDto);
         }
     }
 
     @Override
+    @Transactional(readOnly = true)
     public List<ItemDto> findAllByOwnerId(Long userId) {
         checkUserExistence(userId);
+        LocalDateTime now = LocalDateTime.now();
 
         List<Item> items = itemRepository.findAllByOwnerIdOrderByIdAsc(userId);
 
         List<Long> itemIds = items.stream().map(Item::getId).toList();
 
-        LocalDateTime now = LocalDateTime.now();
-
-        List<Booking> previousBookingsForItems = bookingRepository.findPreviousBookingsForItems(itemIds, now);
-        List<Booking> featureBookingsForItems = bookingRepository.findFeatureBookingsForItems(itemIds, now);
-
-        Map<Long, Booking> previousBookingsMap = previousBookingsForItems.stream().collect(Collectors.toMap(
-                booking -> booking.getItem().getId(),
-                booking -> booking,
-                (existing, replacement) -> existing));
-
-        Map<Long, Booking> featureBookingsMap = featureBookingsForItems.stream().collect(Collectors.toMap(
-                booking -> booking.getItem().getId(),
-                booking -> booking,
-                (existing, replacement) -> existing));
-
+        Map<Long, Booking> previousBookingsMap = getPreviousBookingsMap(itemIds, now);
+        Map<Long, Booking> featureBookingsMap = getFeatureBookingsMap(itemIds, now);
+        Map<Long, List<Comment>> commentsMap = getCommentsMap(itemIds);
 
         return items.stream()
                 .map(item -> {
                     Booking last = previousBookingsMap.getOrDefault(item.getId(), null);
                     Booking next = featureBookingsMap.getOrDefault(item.getId(), null);
-                    return ItemDto.mapToDto(item, last, next);
+                    List<CommentDto> commentsDto = commentsMap.getOrDefault(item.getId(), Collections.emptyList()).stream().map(CommentDto::mapToDto).toList();
+                    return ItemDto.mapToDto(item, last, next, commentsDto);
                 })
                 .toList();
     }
 
     @Override
+    @Transactional(readOnly = true)
     public List<ItemDto> searchByNameOrDescription(String text) {
         if (text.isBlank()) {
             return Collections.emptyList();
         }
 
         List<Item> items = itemRepository.findAllByNameOrDescriptionContainingIgnoreCase(text);
+        List<Long> itemIds = items.stream().map(Item::getId).toList();
+
+        Map<Long, List<Comment>> commentsMap = getCommentsMap(itemIds);
 
         return items.stream()
-                .map(ItemDto::mapToDto)
+                .map(item -> {
+                    List<CommentDto> commentsDto = commentsMap.getOrDefault(item.getId(), Collections.emptyList()).stream().map(CommentDto::mapToDto).toList();
+                    return ItemDto.mapToDto(item, commentsDto);
+                })
                 .toList();
+    }
+
+    private Map<Long, Booking> getPreviousBookingsMap(List<Long> itemIds, LocalDateTime now) {
+        List<Booking> previousBookingsForItems = bookingRepository.findPreviousBookingsForItems(itemIds, now);
+
+        return previousBookingsForItems.stream().collect(Collectors.toMap(
+                booking -> booking.getItem().getId(),
+                booking -> booking,
+                (existing, replacement) -> existing));
+    }
+
+    private Map<Long, Booking> getFeatureBookingsMap(List<Long> itemIds, LocalDateTime now) {
+        List<Booking> featureBookingsForItems = bookingRepository.findFeatureBookingsForItems(itemIds, now);
+
+        return featureBookingsForItems.stream().collect(Collectors.toMap(
+                booking -> booking.getItem().getId(),
+                booking -> booking,
+                (existing, replacement) -> existing));
+    }
+
+    private Map<Long, List<Comment>> getCommentsMap(List<Long> itemIds) {
+        List<Comment> comments = commentRepository.findAllByItemIdInOrderByCreatedDesc(itemIds);
+
+        return comments.stream().collect(Collectors.groupingBy(
+                comment -> comment.getItem().getId(),
+                Collectors.toList()
+        ));
     }
 
     private void checkUserExistence(Long userId) {
