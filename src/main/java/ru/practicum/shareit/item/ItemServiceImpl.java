@@ -114,6 +114,7 @@ public class ItemServiceImpl implements ItemService {
         Map<Long, List<Comment>> commentsMap = getCommentsMap(itemIds);
 
         return items.stream()
+                .filter(Item::getAvailable)
                 .map(item -> {
                     List<CommentDto> commentsDto = commentsMap.getOrDefault(item.getId(), Collections.emptyList()).stream().map(CommentDto::mapToDto).toList();
                     return ItemDto.mapToDto(item, commentsDto);
