@@ -60,5 +60,5 @@ public interface BookingRepository extends JpaRepository<Booking, Long> {
             """)
     List<Booking> findFeatureBookingsForItems(@Param("itemIds") List<Long> itemIds, @Param("now") LocalDateTime now);
 
-
+    boolean existsByBookerIdAndItemIdAndStatusAndEndDateBefore(Long bookerId, Long itemId, BookingStatus status, LocalDateTime now);
 }

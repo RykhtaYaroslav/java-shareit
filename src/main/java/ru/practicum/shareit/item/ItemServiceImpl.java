@@ -56,7 +56,7 @@ public class ItemServiceImpl implements ItemService {
     public ItemDto findById(Long userId, Long itemId) {
         checkUserExistence(userId);
 
-        Item item = itemRepository.findById(itemId).orElseThrow(() -> new NotFoundException(String.format("Предмет с id=%d не найден", itemId)));
+        Item item = getItem(itemId);
 
         List<Comment> comments = commentRepository.findAllByItemIdOrderByCreatedDesc(itemId);
 
@@ -119,6 +119,10 @@ public class ItemServiceImpl implements ItemService {
                     return ItemDto.mapToDto(item, commentsDto);
                 })
                 .toList();
+    }
+
+    private Item getItem(Long itemId) {
+        return itemRepository.findById(itemId).orElseThrow(() -> new NotFoundException(String.format("Предмет с id=%d не найден", itemId)));
     }
 
     private Map<Long, Booking> getPreviousBookingsMap(List<Long> itemIds, LocalDateTime now) {
