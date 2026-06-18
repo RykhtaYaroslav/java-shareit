@@ -36,7 +36,7 @@ public class UserServiceImpl implements UserService {
 
         updateUserFields(user, toUpdate);
 
-        User updated = userRepository.save(toUpdate);
+        User updated = userRepository.save(user);
         return UserDto.mapToDto(updated);
     }
 
@@ -72,12 +72,12 @@ public class UserServiceImpl implements UserService {
         }
     }
 
-    private void updateUserFields(User user, User updateRequest) {
-        if (updateRequest.getName() != null) {
-            user.setName(updateRequest.getName());
+    private void updateUserFields(User user, User toUpdate) {
+        if (toUpdate.getName() != null) {
+            user.setName(toUpdate.getName());
         }
 
-        String email = updateRequest.getEmail();
+        String email = toUpdate.getEmail();
 
         if (email != null) {
             checkEmailAvailability(email);
