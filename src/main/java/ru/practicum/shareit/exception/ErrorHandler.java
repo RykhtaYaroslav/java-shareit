@@ -10,12 +10,6 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 @RestControllerAdvice
 @Slf4j
 public class ErrorHandler {
-
-    /**
-     * TODO
-     *  NotAvailableException возвращают статус HttpStatus.BAD_REQUEST
-     */
-
     @ExceptionHandler(NotFoundException.class)
     @ResponseStatus(HttpStatus.NOT_FOUND)
     public ErrorResponse notFoundHandler(Exception e) {
@@ -23,7 +17,7 @@ public class ErrorHandler {
         return new ErrorResponse(e.getMessage());
     }
 
-    @ExceptionHandler(MethodArgumentNotValidException.class)
+    @ExceptionHandler({MethodArgumentNotValidException.class, NotAvailableException.class})
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     public ErrorResponse validationHandler(Exception e) {
         log.error(e.getMessage());
