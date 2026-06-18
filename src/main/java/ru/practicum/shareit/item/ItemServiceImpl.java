@@ -16,7 +16,6 @@ import java.time.LocalDateTime;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -50,14 +49,22 @@ public class ItemServiceImpl implements ItemService {
     }
 
     @Override
-    public ItemDto findById(Long itemId) {
-        Optional<Item> itemOptional = itemRepository.findById(itemId);
+    public ItemDto findById(Long userId, Long itemId) {
+        checkUserExistence(userId);
 
-        if (itemOptional.isEmpty()) {
-            throw new NotFoundException(String.format("Предмет с id=%d не найден", itemId));
+        Item item = itemRepository.findById(itemId).orElseThrow(() -> new NotFoundException(String.format("Предмет с id=%d не найден", itemId)));
+
+        if (item.getOwnerId().equals(userId)) {
+            LocalDateTime now = LocalDateTime.now();
+
+            List<Booking> previousBookingsForItems = bookingRepository.findPreviousBookingsForItems(List.of(itemId), now);
+            List<Booking> featureBookingsForItems = bookingRepository.findFeatureBookingsForItems(List.of(itemId), now);
+
+            Booking last = previousBookingsForItems.isEmpty() ? null : previousBookingsForItems.getFirst();
+            Booking next = featureBookingsForItems.isEmpty() ? null : featureBookingsForItems.getFirst();
+
+            return ItemDto.mapToDto(item, last, next);
         } else {
-            Item item = itemOptional.get();
-
             return ItemDto.mapToDto(item);
         }
     }

@@ -62,7 +62,7 @@ public class ItemDto {
         private Long id;
         private Long bookerId;
 
-        public static BookingShortDto mapToDto (Booking booking){
+        public static BookingShortDto mapToDto(Booking booking) {
             return BookingShortDto.builder()
                     .id(booking.getId())
                     .bookerId(booking.getBooker().getId())
