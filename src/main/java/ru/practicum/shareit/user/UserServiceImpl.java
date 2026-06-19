@@ -10,7 +10,6 @@ import ru.practicum.shareit.user.dto.UserDtoCreateRequest;
 import ru.practicum.shareit.user.dto.UserDtoUpdateRequest;
 
 import java.util.List;
-import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -46,16 +45,14 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    @Transactional(readOnly = true)
     public UserDto findById(Long userId) {
-        Optional<User> user = userRepository.findById(userId);
-
-        if (user.isEmpty()) {
-            throw new NotFoundException(String.format("Пользователь с id=%d не найден", userId));
-        }
-        return UserDto.mapToDto(user.get());
+        User user = getUser(userId);
+        return UserDto.mapToDto(user);
     }
 
     @Override
+    @Transactional(readOnly = true)
     public List<UserDto> findAll() {
         List<User> users = userRepository.findAll();
         return users.stream().map(UserDto::mapToDto).toList();
