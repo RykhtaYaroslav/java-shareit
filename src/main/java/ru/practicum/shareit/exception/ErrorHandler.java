@@ -17,7 +17,7 @@ public class ErrorHandler {
         return new ErrorResponse(e.getMessage());
     }
 
-    @ExceptionHandler(MethodArgumentNotValidException.class)
+    @ExceptionHandler({MethodArgumentNotValidException.class, NotAvailableException.class})
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     public ErrorResponse validationHandler(Exception e) {
         log.error(e.getMessage());
@@ -31,7 +31,7 @@ public class ErrorHandler {
         return new ErrorResponse(e.getMessage());
     }
 
-    @ExceptionHandler(Throwable.class)
+    @ExceptionHandler(Exception.class)
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
     public ErrorResponse handleException(final Throwable e) {
         log.error(e.getMessage());
