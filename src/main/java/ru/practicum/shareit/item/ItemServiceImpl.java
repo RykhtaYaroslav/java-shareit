@@ -127,9 +127,9 @@ public class ItemServiceImpl implements ItemService {
     }
 
     @Override
-    public List<ItemDto> findAllByRequestId(Long requestId) {
-        List<Item> items = itemRepository.findAllByRequestIdAndAvailableTrue(requestId);
-        return items.stream().map(ItemDto::mapToDto).toList();
+    @Transactional(readOnly = true)
+    public List<Item> findAllByRequestsIds(List<Long> requestIds) {
+        return itemRepository.findAllByRequestIdInAndAvailableTrue(requestIds);
     }
 
     private Map<Long, Booking> getPreviousBookingsMap(List<Long> itemIds, LocalDateTime now) {

@@ -20,6 +20,7 @@ public class ItemDto {
     private String name;
     private String description;
     private Boolean available;
+    private Long requestId;
 
     private BookingShortDto lastBooking;
     private BookingShortDto nextBooking;
@@ -36,6 +37,7 @@ public class ItemDto {
                 .lastBooking(null)
                 .nextBooking(null)
                 .comments(new ArrayList<>())
+                .requestId(item.getRequestId())
                 .build();
     }
 
@@ -48,6 +50,7 @@ public class ItemDto {
                 .lastBooking(null)
                 .nextBooking(null)
                 .comments(commentsDto != null ? commentsDto : new ArrayList<>())
+                .requestId(item.getRequestId())
                 .build();
     }
 
@@ -61,6 +64,7 @@ public class ItemDto {
                 .lastBooking(lastBooking != null ? BookingShortDto.mapToDto(lastBooking) : null)
                 .nextBooking(nextBooking != null ? BookingShortDto.mapToDto(nextBooking) : null)
                 .comments(commentsDto != null ? commentsDto : new ArrayList<>())
+                .requestId(item.getRequestId())
                 .build();
     }
 
