@@ -19,4 +19,6 @@ public interface ItemService {
     List<ItemDto> searchByNameOrDescription(String text);
 
     Item getItem(Long itemId);
+
+    List<ItemDto> findAllByRequestId(Long requestId);
 }

@@ -126,6 +126,12 @@ public class ItemServiceImpl implements ItemService {
         return itemRepository.findById(itemId).orElseThrow(() -> new NotFoundException(String.format("Предмет с id=%d не найден", itemId)));
     }
 
+    @Override
+    public List<ItemDto> findAllByRequestId(Long requestId) {
+        List<Item> items = itemRepository.findAllByRequestIdAndAvailableTrue(requestId);
+        return items.stream().map(ItemDto::mapToDto).toList();
+    }
+
     private Map<Long, Booking> getPreviousBookingsMap(List<Long> itemIds, LocalDateTime now) {
         List<Booking> previousBookingsForItems = bookingRepository.findPreviousBookingsForItems(itemIds, now);
 
