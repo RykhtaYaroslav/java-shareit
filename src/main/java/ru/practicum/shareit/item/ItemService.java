@@ -7,6 +7,7 @@ import ru.practicum.shareit.item.model.Item;
 
 import java.util.List;
 
+@SuppressWarnings("unused")
 public interface ItemService {
     ItemDto create(Long userId, ItemDtoCreateRequest request);
 

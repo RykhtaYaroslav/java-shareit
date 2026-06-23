@@ -6,6 +6,7 @@ import ru.practicum.shareit.booking.dto.BookingUpdateDto;
 
 import java.util.List;
 
+@SuppressWarnings("unused")
 public interface BookingService {
     BookingDto create(Long userId, BookingRequestDto bookingRequestDto);
 
