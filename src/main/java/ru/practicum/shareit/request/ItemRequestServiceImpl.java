@@ -64,12 +64,6 @@ public class ItemRequestServiceImpl implements ItemRequestService {
         return getRequestsDtoWithResponsesDto(List.of(itemRequest)).getFirst();
     }
 
-    public ItemRequestDto findById(Long requestId) {
-        ItemRequest itemRequest = itemRequestRepository.findById(requestId).orElseThrow(() -> new NotFoundException("Request not found"));
-
-        return getRequestsDtoWithResponsesDto(List.of(itemRequest)).getFirst();
-    }
-
     private List<ItemRequestDto> getRequestsDtoWithResponsesDto(List<ItemRequest> requests) {
         Map<Long, List<ItemRequestDto.ItemResponseDto>> responsesDto = getResponses(requests);
 
