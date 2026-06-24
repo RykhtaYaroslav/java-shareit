@@ -2,6 +2,7 @@ package ru.practicum.shareit.request;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import ru.practicum.shareit.exception.NotFoundException;
 import ru.practicum.shareit.item.ItemService;
 import ru.practicum.shareit.item.model.Item;
 import ru.practicum.shareit.request.dto.ItemRequestDto;
@@ -43,21 +44,27 @@ public class ItemRequestServiceImpl implements ItemRequestService {
         userService.getUser(userId);
         List<ItemRequest> requests = itemRequestRepository.findAllByUserIdOrderByCreatedDesc(userId);
 
-        Map<Long, List<ItemRequestDto.ItemResponseDto>> responsesDto = getResponses(requests);
-
-
-        return requests.stream().map(itemRequest -> {
-            List<ItemRequestDto.ItemResponseDto> responsesById = responsesDto.getOrDefault(itemRequest.getId(), Collections.emptyList());
-            return itemRequestMapper.mapToDto(itemRequest, responsesById);
-        }).toList();
+        return getRequestsDtoWithResponsesDto(requests);
     }
 
     @Override
     public List<ItemRequestDto> findAllFromOthers(Long userId, Integer from, Integer size) {
-        userService.findById(userId);
+        userService.getUser(userId);
 
         List<ItemRequest> requests = itemRequestRepository.findAllByUserIdNotWithPagination(userId, from, size);
 
+        return getRequestsDtoWithResponsesDto(requests);
+    }
+
+    @Override
+    public ItemRequestDto findById(Long userId, Long requestId) {
+        userService.getUser(userId);
+        ItemRequest itemRequest = itemRequestRepository.findById(requestId).orElseThrow(() -> new NotFoundException("Request not found"));
+
+        return getRequestsDtoWithResponsesDto(List.of(itemRequest)).getFirst();
+    }
+
+    private List<ItemRequestDto> getRequestsDtoWithResponsesDto(List<ItemRequest> requests) {
         Map<Long, List<ItemRequestDto.ItemResponseDto>> responsesDto = getResponses(requests);
 
         return requests.stream().map(itemRequest -> {
@@ -75,6 +82,7 @@ public class ItemRequestServiceImpl implements ItemRequestService {
                 (Item::getRequestId, Collectors.mapping(
                                 itemRequestMapper::mapToItemResponseDto, Collectors.toList()
                         )
-                ));
+                )
+        );
     }
 }
