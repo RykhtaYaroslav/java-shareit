@@ -12,6 +12,7 @@ import ru.practicum.shareit.item.dto.ItemDtoCreateRequest;
 import ru.practicum.shareit.item.dto.ItemDtoUpdateRequest;
 import ru.practicum.shareit.item.model.Comment;
 import ru.practicum.shareit.item.model.Item;
+import ru.practicum.shareit.request.ItemRequestRepository;
 import ru.practicum.shareit.user.UserRepository;
 
 import java.time.LocalDateTime;
@@ -28,10 +29,15 @@ public class ItemServiceImpl implements ItemService {
     private final UserRepository userRepository;
     private final BookingRepository bookingRepository;
     private final CommentRepository commentRepository;
+    private final ItemRequestRepository itemRequestRepository;
 
     @Override
     public ItemDto create(Long userId, ItemDtoCreateRequest request) {
         checkUserExistence(userId);
+
+        if (request.getItemRequestId() != null) {
+            itemRequestRepository.findById(request.getItemRequestId()).orElseThrow(() -> new NotFoundException("Request not found"));
+        }
 
         Item itemRequest = ItemDtoCreateRequest.mapToModel(userId, request);
 
@@ -129,7 +135,7 @@ public class ItemServiceImpl implements ItemService {
     @Override
     @Transactional(readOnly = true)
     public List<Item> findAllByRequestsIds(List<Long> requestIds) {
-        return itemRepository.findAllByRequestIdInAndAvailableTrue(requestIds);
+        return itemRepository.findAllByItemRequestIdInAndAvailableTrue(requestIds);
     }
 
     private Map<Long, Booking> getPreviousBookingsMap(List<Long> itemIds, LocalDateTime now) {
