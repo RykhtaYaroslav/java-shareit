@@ -9,4 +9,6 @@ public interface ItemRequestService {
     ItemRequestDto create(Long userId, ItemRequestRequestDto dto);
 
     List<ItemRequestDto> findAllByUserId(Long userId);
+
+    List<ItemRequestDto> findAllFromOthers(Long userId, Integer from, Integer size);
 }

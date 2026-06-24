@@ -52,6 +52,20 @@ public class ItemRequestServiceImpl implements ItemRequestService {
         }).toList();
     }
 
+    @Override
+    public List<ItemRequestDto> findAllFromOthers(Long userId, Integer from, Integer size) {
+        userService.findById(userId);
+
+        List<ItemRequest> requests = itemRequestRepository.findAllByUserIdNotWithPagination(userId, from, size);
+
+        Map<Long, List<ItemRequestDto.ItemResponseDto>> responsesDto = getResponses(requests);
+
+        return requests.stream().map(itemRequest -> {
+            List<ItemRequestDto.ItemResponseDto> responsesById = responsesDto.getOrDefault(itemRequest.getId(), Collections.emptyList());
+            return itemRequestMapper.mapToDto(itemRequest, responsesById);
+        }).toList();
+    }
+
     private Map<Long, List<ItemRequestDto.ItemResponseDto>> getResponses(List<ItemRequest> requests) {
         List<Long> requestIds = requests.stream().map(ItemRequest::getId).toList();
 
