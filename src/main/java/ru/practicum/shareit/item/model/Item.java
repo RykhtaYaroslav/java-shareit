@@ -36,8 +36,8 @@ public class Item {
     private String description;
     private Boolean available;
 
-    @Column(name = "request_id")
-    private Long requestId;
+    @Column(name = "item_request_id")
+    private Long itemRequestId;
 
     @Override
     public final boolean equals(Object o) {

@@ -79,7 +79,7 @@ public class ItemRequestServiceImpl implements ItemRequestService {
         List<Item> items = itemService.findAllByRequestsIds(requestIds);
 
         return items.stream().collect(Collectors.groupingBy
-                (Item::getRequestId, Collectors.mapping(
+                (Item::getItemRequestId, Collectors.mapping(
                                 itemRequestMapper::mapToItemResponseDto, Collectors.toList()
                         )
                 )
