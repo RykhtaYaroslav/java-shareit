@@ -25,7 +25,7 @@ import ru.practicum.shareit.user.UserRepository;
 import java.util.Optional;
 
 @ExtendWith(MockitoExtension.class)
-class ItemServiceCreateTest {
+class ItemServiceCreateUnitTest {
 
     @Mock
     private ItemRequestRepository itemRequestRepositoryMock;

@@ -28,7 +28,7 @@ import java.util.Optional;
 import java.util.stream.Stream;
 
 @ExtendWith(MockitoExtension.class)
-class ItemServiceUpdateTest {
+class ItemServiceUpdateUnitTest {
     @Mock
     private ItemRequestRepository itemRequestRepositoryMock;
 
