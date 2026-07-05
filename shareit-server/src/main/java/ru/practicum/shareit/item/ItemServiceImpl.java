@@ -72,7 +72,7 @@ public class ItemServiceImpl implements ItemService {
             LocalDateTime now = LocalDateTime.now();
 
             List<Booking> previousBookingsForItems = bookingRepository.findPreviousBookingsForItems(List.of(itemId), now);
-            List<Booking> featureBookingsForItems = bookingRepository.findFeatureBookingsForItems(List.of(itemId), now);
+            List<Booking> featureBookingsForItems = bookingRepository.findFutureBookingsForItems(List.of(itemId), now);
 
             Booking last = previousBookingsForItems.isEmpty() ? null : previousBookingsForItems.getFirst();
             Booking next = featureBookingsForItems.isEmpty() ? null : featureBookingsForItems.getFirst();
@@ -148,7 +148,7 @@ public class ItemServiceImpl implements ItemService {
     }
 
     private Map<Long, Booking> getFeatureBookingsMap(List<Long> itemIds, LocalDateTime now) {
-        List<Booking> featureBookingsForItems = bookingRepository.findFeatureBookingsForItems(itemIds, now);
+        List<Booking> featureBookingsForItems = bookingRepository.findFutureBookingsForItems(itemIds, now);
 
         return featureBookingsForItems.stream().collect(Collectors.toMap(
                 booking -> booking.getItem().getId(),
