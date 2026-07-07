@@ -86,7 +86,7 @@ class ItemServiceFindByIdUnitTest {
         // Обратились в commentRepository.findAllByItemIdOrderByCreatedDesc только один раз
         Mockito.verify(commentRepositoryMock, Mockito.times(1)).findAllByItemIdOrderByCreatedDesc(itemId);
         // Больше не обращались в другие методы этих репозиториев:
-        Mockito.verifyNoMoreInteractions(userRepositoryMock,itemRepositoryMock, commentRepositoryMock);
+        Mockito.verifyNoMoreInteractions(userRepositoryMock, itemRepositoryMock, commentRepositoryMock);
         // В эти репозитории не заходили вообще:
         Mockito.verifyNoInteractions(bookingRepositoryMock, itemRequestRepositoryMock);
     }
@@ -123,7 +123,7 @@ class ItemServiceFindByIdUnitTest {
         // Обратились в commentRepository.findAllByItemIdOrderByCreatedDesc только один раз
         Mockito.verify(commentRepositoryMock, Mockito.times(1)).findAllByItemIdOrderByCreatedDesc(itemId);
         // Больше не обращались в другие методы этих репозиториев:
-        Mockito.verifyNoMoreInteractions(userRepositoryMock,itemRepositoryMock, commentRepositoryMock);
+        Mockito.verifyNoMoreInteractions(userRepositoryMock, itemRepositoryMock, commentRepositoryMock);
         // В эти репозитории не заходили вообще:
         Mockito.verifyNoInteractions(bookingRepositoryMock, itemRequestRepositoryMock);
     }
@@ -177,7 +177,7 @@ class ItemServiceFindByIdUnitTest {
         Mockito.verify(bookingRepositoryMock, Mockito.times(1)).findPreviousBookingsForItems(Mockito.eq(itemsId), Mockito.any(LocalDateTime.class));
         Mockito.verify(bookingRepositoryMock, Mockito.times(1)).findFutureBookingsForItems(Mockito.eq(itemsId), Mockito.any(LocalDateTime.class));
         // Больше не обращались в другие методы этих репозиториев:
-        Mockito.verifyNoMoreInteractions(userRepositoryMock,itemRepositoryMock, commentRepositoryMock, bookingRepositoryMock);
+        Mockito.verifyNoMoreInteractions(userRepositoryMock, itemRepositoryMock, commentRepositoryMock, bookingRepositoryMock);
         // В эти репозитории не заходили вообще:
         Mockito.verifyNoInteractions(itemRequestRepositoryMock);
     }
@@ -219,7 +219,7 @@ class ItemServiceFindByIdUnitTest {
         Mockito.verify(bookingRepositoryMock, Mockito.times(1)).findPreviousBookingsForItems(Mockito.eq(itemsId), Mockito.any(LocalDateTime.class));
         Mockito.verify(bookingRepositoryMock, Mockito.times(1)).findFutureBookingsForItems(Mockito.eq(itemsId), Mockito.any(LocalDateTime.class));
         // Больше не обращались в другие методы этих репозиториев:
-        Mockito.verifyNoMoreInteractions(userRepositoryMock,itemRepositoryMock, commentRepositoryMock, bookingRepositoryMock);
+        Mockito.verifyNoMoreInteractions(userRepositoryMock, itemRepositoryMock, commentRepositoryMock, bookingRepositoryMock);
         // В эти репозитории не заходили вообще:
         Mockito.verifyNoInteractions(itemRequestRepositoryMock);
     }
