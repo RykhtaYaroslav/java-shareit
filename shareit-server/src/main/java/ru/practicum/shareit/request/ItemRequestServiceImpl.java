@@ -2,6 +2,7 @@ package ru.practicum.shareit.request;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import ru.practicum.shareit.exception.NotFoundException;
 import ru.practicum.shareit.item.ItemService;
 import ru.practicum.shareit.item.model.Item;
@@ -40,6 +41,7 @@ public class ItemRequestServiceImpl implements ItemRequestService {
     }
 
     @Override
+    @Transactional(readOnly = true)
     public List<ItemRequestDto> findAllByUserId(Long userId) {
         userService.getUser(userId);
         List<ItemRequest> requests = itemRequestRepository.findAllByUserIdOrderByCreatedDesc(userId);
@@ -48,6 +50,7 @@ public class ItemRequestServiceImpl implements ItemRequestService {
     }
 
     @Override
+    @Transactional(readOnly = true)
     public List<ItemRequestDto> findAllFromOthers(Long userId, Integer from, Integer size) {
         userService.getUser(userId);
 
@@ -57,6 +60,7 @@ public class ItemRequestServiceImpl implements ItemRequestService {
     }
 
     @Override
+    @Transactional(readOnly = true)
     public ItemRequestDto findById(Long userId, Long requestId) {
         userService.getUser(userId);
         ItemRequest itemRequest = itemRequestRepository.findById(requestId).orElseThrow(() -> new NotFoundException("Request not found"));
