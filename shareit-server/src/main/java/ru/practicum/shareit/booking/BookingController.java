@@ -11,7 +11,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import ru.practicum.shareit.booking.dto.BookingDto;
-import ru.practicum.shareit.booking.dto.BookingRequestDto;
+import ru.practicum.shareit.booking.dto.BookingDtoCreateRequest;
 
 import java.util.List;
 
@@ -23,8 +23,8 @@ public class BookingController {
 
     @PostMapping
     public BookingDto create(@RequestHeader("X-Sharer-User-Id") Long userId,
-                             @RequestBody BookingRequestDto bookingRequestDto) {
-        return bookingService.create(userId, bookingRequestDto);
+                             @RequestBody BookingDtoCreateRequest bookingDtoCreateRequest) {
+        return bookingService.create(userId, bookingDtoCreateRequest);
     }
 
     @PatchMapping(path = "/{bookingId}")

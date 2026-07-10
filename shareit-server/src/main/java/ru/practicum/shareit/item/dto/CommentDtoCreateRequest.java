@@ -14,10 +14,10 @@ import java.time.LocalDateTime;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class CommentRequestDto {
+public class CommentDtoCreateRequest {
     private String text;
 
-    public static Comment mapToModel(CommentRequestDto request, Item item, User author, LocalDateTime created) {
+    public static Comment mapToModel(CommentDtoCreateRequest request, Item item, User author, LocalDateTime created) {
         return Comment.builder()
                 .text(request.getText())
                 .author(author)

@@ -7,7 +7,7 @@ import ru.practicum.shareit.booking.BookingRepository;
 import ru.practicum.shareit.booking.model.BookingStatus;
 import ru.practicum.shareit.exception.NotAvailableException;
 import ru.practicum.shareit.item.dto.CommentDto;
-import ru.practicum.shareit.item.dto.CommentRequestDto;
+import ru.practicum.shareit.item.dto.CommentDtoCreateRequest;
 import ru.practicum.shareit.item.model.Comment;
 import ru.practicum.shareit.item.model.Item;
 import ru.practicum.shareit.user.User;
@@ -24,7 +24,7 @@ public class CommentService {
     private final UserService userService;
     private final ItemService itemService;
 
-    public CommentDto createComment(Long userId, Long itemId, CommentRequestDto request) {
+    public CommentDto createComment(Long userId, Long itemId, CommentDtoCreateRequest request) {
         Item item = itemService.getItem(itemId);
 
         User author = userService.getUser(userId);
@@ -33,7 +33,7 @@ public class CommentService {
 
         checkUserWasBooker(userId, itemId, now);
 
-        Comment comment = commentRepository.save(CommentRequestDto.mapToModel(request, item, author, now));
+        Comment comment = commentRepository.save(CommentDtoCreateRequest.mapToModel(request, item, author, now));
 
         return CommentDto.mapToDto(comment);
     }

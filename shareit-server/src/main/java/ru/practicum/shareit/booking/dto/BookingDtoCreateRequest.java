@@ -8,18 +8,18 @@ import java.time.LocalDateTime;
 
 @Data
 @Builder
-public class BookingRequestDto {
+public class BookingDtoCreateRequest {
     private Long itemId;
 
     private LocalDateTime start;
 
     private LocalDateTime end;
 
-    public static Booking mapToModel(BookingRequestDto bookingRequestDto) {
+    public static Booking mapToModel(BookingDtoCreateRequest bookingDtoCreateRequest) {
         return Booking.builder()
-                .id(bookingRequestDto.getItemId())
-                .startDate(bookingRequestDto.getStart())
-                .endDate(bookingRequestDto.getEnd())
+                .id(bookingDtoCreateRequest.getItemId())
+                .startDate(bookingDtoCreateRequest.getStart())
+                .endDate(bookingDtoCreateRequest.getEnd())
                 .build();
     }
 }

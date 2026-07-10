@@ -8,7 +8,7 @@ import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 import ru.practicum.shareit.booking.dto.BookingDto;
-import ru.practicum.shareit.booking.dto.BookingRequestDto;
+import ru.practicum.shareit.booking.dto.BookingDtoCreateRequest;
 import ru.practicum.shareit.booking.model.Booking;
 import ru.practicum.shareit.booking.model.BookingStatus;
 import ru.practicum.shareit.exception.NotAvailableException;
@@ -57,7 +57,7 @@ class BookingServiceCreateUnitTest {
         LocalDateTime start = LocalDateTime.now().plusDays(1);
         LocalDateTime end = LocalDateTime.now().plusDays(2);
 
-        BookingRequestDto requestDto = BookingRequestDto.builder()
+        BookingDtoCreateRequest requestDto = BookingDtoCreateRequest.builder()
                 .itemId(itemId)
                 .start(start)
                 .end(end)
@@ -107,7 +107,7 @@ class BookingServiceCreateUnitTest {
         // ПОДГОТОВКА ДАННЫХ
         //
         Long wrongBookerId = -1L;
-        BookingRequestDto requestDto = BookingRequestDto.builder().itemId(itemId).build();
+        BookingDtoCreateRequest requestDto = BookingDtoCreateRequest.builder().itemId(itemId).build();
 
         // НАСТРОЙКА МОКОВ
         //
@@ -131,7 +131,7 @@ class BookingServiceCreateUnitTest {
     void throwExceptionWhenItemNotFound() {
         // ПОДГОТОВКА ДАННЫХ
         //
-        BookingRequestDto requestDto = BookingRequestDto.builder().itemId(itemId).build();
+        BookingDtoCreateRequest requestDto = BookingDtoCreateRequest.builder().itemId(itemId).build();
 
         // НАСТРОЙКА МОКОВ
         //
@@ -157,7 +157,7 @@ class BookingServiceCreateUnitTest {
     void throwExceptionWhenOwnerTriesToBookHisOwnItem() {
         // ПОДГОТОВКА ДАННЫХ
         //
-        BookingRequestDto requestDto = BookingRequestDto.builder().itemId(itemId).build();
+        BookingDtoCreateRequest requestDto = BookingDtoCreateRequest.builder().itemId(itemId).build();
 
         // НАСТРОЙКА МОКОВ
         //
@@ -184,7 +184,7 @@ class BookingServiceCreateUnitTest {
     void throwExceptionWhenItemIsNotAvailable() {
         // ПОДГОТОВКА ДАННЫХ
         //
-        BookingRequestDto requestDto = BookingRequestDto.builder().itemId(itemId).build();
+        BookingDtoCreateRequest requestDto = BookingDtoCreateRequest.builder().itemId(itemId).build();
         Item unavailableItem = new Item(itemId, ownerId, "Дрель", "Сломанная", false, null);
 
         // НАСТРОЙКА МОКОВ
@@ -214,7 +214,7 @@ class BookingServiceCreateUnitTest {
         LocalDateTime start = LocalDateTime.now().plusDays(5);
         LocalDateTime end = LocalDateTime.now().plusDays(2); // Конец раньше начала
 
-        BookingRequestDto requestDto = BookingRequestDto.builder()
+        BookingDtoCreateRequest requestDto = BookingDtoCreateRequest.builder()
                 .itemId(itemId)
                 .start(start)
                 .end(end)
@@ -247,7 +247,7 @@ class BookingServiceCreateUnitTest {
         LocalDateTime start = LocalDateTime.now().plusDays(1);
         LocalDateTime end = LocalDateTime.now().plusDays(2);
 
-        BookingRequestDto requestDto = BookingRequestDto.builder()
+        BookingDtoCreateRequest requestDto = BookingDtoCreateRequest.builder()
                 .itemId(itemId)
                 .start(start)
                 .end(end)

@@ -4,8 +4,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ru.practicum.shareit.booking.dto.BookingDto;
-import ru.practicum.shareit.booking.dto.BookingRequestDto;
-import ru.practicum.shareit.booking.dto.BookingUpdateDto;
+import ru.practicum.shareit.booking.dto.BookingDtoCreateRequest;
+import ru.practicum.shareit.booking.dto.BookingDtoUpdateRequest;
 import ru.practicum.shareit.booking.model.Booking;
 import ru.practicum.shareit.booking.model.BookingState;
 import ru.practicum.shareit.booking.model.BookingStatus;
@@ -30,13 +30,13 @@ public class BookingServiceImpl implements BookingService {
     private final ItemRepository itemRepository;
 
     @Override
-    public BookingDto create(Long userId, BookingRequestDto bookingRequestDto) {
+    public BookingDto create(Long userId, BookingDtoCreateRequest bookingDtoCreateRequest) {
         User user = findUserById(userId);
 
-        Item item = extractItem(bookingRequestDto, user);
+        Item item = extractItem(bookingDtoCreateRequest, user);
 
-        LocalDateTime start = bookingRequestDto.getStart();
-        LocalDateTime end = bookingRequestDto.getEnd();
+        LocalDateTime start = bookingDtoCreateRequest.getStart();
+        LocalDateTime end = bookingDtoCreateRequest.getEnd();
 
         checkBookingDates(start, end, item);
 
@@ -146,7 +146,7 @@ public class BookingServiceImpl implements BookingService {
     }
 
     @Override
-    public BookingDto update(BookingUpdateDto bookingUpdateDto) {
+    public BookingDto update(BookingDtoUpdateRequest bookingDtoUpdateRequest) {
         // Может быть дальше появится необходимость реализовать такой функционал
         return null;
     }
@@ -168,9 +168,9 @@ public class BookingServiceImpl implements BookingService {
         return state;
     }
 
-    private Item extractItem(BookingRequestDto bookingRequestDto, User user) {
-        Item item = itemRepository.findById(bookingRequestDto.getItemId()).orElseThrow(
-                () -> new NotFoundException(String.format("Предмет с id=%d не найден", bookingRequestDto.getItemId())));
+    private Item extractItem(BookingDtoCreateRequest bookingDtoCreateRequest, User user) {
+        Item item = itemRepository.findById(bookingDtoCreateRequest.getItemId()).orElseThrow(
+                () -> new NotFoundException(String.format("Предмет с id=%d не найден", bookingDtoCreateRequest.getItemId())));
 
         if (user.getId().equals(item.getOwnerId())) {
             throw new NotFoundException(String.format(
