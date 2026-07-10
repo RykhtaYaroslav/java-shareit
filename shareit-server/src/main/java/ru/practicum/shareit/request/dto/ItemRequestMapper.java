@@ -12,7 +12,7 @@ import java.util.List;
 @Mapper(componentModel = "spring")
 public interface ItemRequestMapper {
     @Mapping(target = "id", ignore = true)
-    ItemRequest mapToModel(ItemRequestCreateRequestDto dto, LocalDateTime created, User user);
+    ItemRequest mapToModel(ItemRequestDtoCreateRequest dto, LocalDateTime created, User user);
 
     ItemRequestDto mapToDto(ItemRequest itemRequest, List<ItemRequestDto.ItemResponseDto> items);
 

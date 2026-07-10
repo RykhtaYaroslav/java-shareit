@@ -9,8 +9,8 @@ import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 import ru.practicum.shareit.exception.NotFoundException;
 import ru.practicum.shareit.item.ItemService;
-import ru.practicum.shareit.request.dto.ItemRequestCreateRequestDto;
 import ru.practicum.shareit.request.dto.ItemRequestDto;
+import ru.practicum.shareit.request.dto.ItemRequestDtoCreateRequest;
 import ru.practicum.shareit.request.dto.ItemRequestMapper;
 import ru.practicum.shareit.user.User;
 import ru.practicum.shareit.user.UserService;
@@ -53,7 +53,7 @@ class ItemRequestServiceCreateUnitTest {
     void shouldCreateItemRequestSuccessfully() {
         // ПОДГОТОВКА ДАННЫХ
         //
-        ItemRequestCreateRequestDto requestDto = new ItemRequestCreateRequestDto();
+        ItemRequestDtoCreateRequest requestDto = new ItemRequestDtoCreateRequest();
         requestDto.setDescription(description);
 
         ItemRequest itemRequest = ItemRequest.builder()
@@ -110,7 +110,7 @@ class ItemRequestServiceCreateUnitTest {
         // ПОДГОТОВКА ДАННЫХ
         //
         Long wrongUserId = -1L;
-        ItemRequestCreateRequestDto requestDto = new ItemRequestCreateRequestDto();
+        ItemRequestDtoCreateRequest requestDto = new ItemRequestDtoCreateRequest();
         requestDto.setDescription(description);
 
         // НАСТРОЙКА МОКОВ
