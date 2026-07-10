@@ -6,9 +6,9 @@ import org.springframework.transaction.annotation.Transactional;
 import ru.practicum.shareit.exception.NotFoundException;
 import ru.practicum.shareit.item.ItemService;
 import ru.practicum.shareit.item.model.Item;
+import ru.practicum.shareit.request.dto.ItemRequestCreateRequestDto;
 import ru.practicum.shareit.request.dto.ItemRequestDto;
 import ru.practicum.shareit.request.dto.ItemRequestMapper;
-import ru.practicum.shareit.request.dto.ItemRequestRequestDto;
 import ru.practicum.shareit.user.User;
 import ru.practicum.shareit.user.UserService;
 
@@ -27,7 +27,7 @@ public class ItemRequestServiceImpl implements ItemRequestService {
     private final ItemService itemService;
 
     @Override
-    public ItemRequestDto create(Long userId, ItemRequestRequestDto dto) {
+    public ItemRequestDto create(Long userId, ItemRequestCreateRequestDto dto) {
         User user = userService.getUser(userId);
 
         LocalDateTime created = LocalDateTime.now();
