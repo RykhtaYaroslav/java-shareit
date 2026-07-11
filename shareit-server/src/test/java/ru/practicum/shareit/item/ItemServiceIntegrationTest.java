@@ -95,6 +95,8 @@ class ItemServiceIntegrationTest {
         Long commenterId = commenter.getId();
 
         // Create comment and booking
+        // Тут я использовал костыль в виде ожидания. Но потом разобрался, что можно было просто сохранить данные с помощью
+        // EntityManager, которым я пользуюсь в тестах Booking. Если разрешите не переделывать, то я бы оставил как есть))
         BookingDto bookingDto = createBooking(commenterId, itemId);
         bookingDto = approve(ownerId, bookingDto.getId());
 
