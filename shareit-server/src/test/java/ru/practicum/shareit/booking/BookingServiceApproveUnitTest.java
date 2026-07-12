@@ -38,13 +38,15 @@ class BookingServiceApproveUnitTest {
     private final User booker = User.builder().id(bookerId).name("Booker").build();
     private final Item item = new Item(itemId, ownerId, "Дрель", "Простая дрель", true, null);
 
+    private final LocalDateTime baseTime = LocalDateTime.now();
+
     private Booking createWaitingBooking() {
         return Booking.builder()
                 .id(bookingId)
                 .item(item)
                 .booker(booker)
-                .startDate(LocalDateTime.now().plusDays(1))
-                .endDate(LocalDateTime.now().plusDays(2))
+                .startDate(baseTime.plusDays(1))
+                .endDate(baseTime.plusDays(2))
                 .status(BookingStatus.WAITING)
                 .build();
     }
