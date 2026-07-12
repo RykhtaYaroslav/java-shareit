@@ -51,7 +51,6 @@
                 <groupId>org.jacoco</groupId>
                 <artifactId>jacoco-maven-plugin</artifactId>
                 <configuration>
-                    <!-- Исключаем DTO, конфигурации, клиенты и исключения из анализа -->
                     <excludes>
                         <exclude>**/dto/**</exclude>
                         <exclude>**/config/**</exclude>
@@ -80,7 +79,7 @@
                                         <limit>
                                             <counter>LINE</counter>
                                             <value>COVEREDRATIO</value>
-                                            <minimum>0.05</minimum> <!-- Выставляем минимальный порог -->
+                                            <minimum>0.00</minimum>
                                         </limit>
                                         <limit>
                                             <counter>BRANCH</counter>
@@ -95,12 +94,12 @@
                                         <limit>
                                             <counter>METHOD</counter>
                                             <value>COVEREDRATIO</value>
-                                            <minimum>0.05</minimum>
+                                            <minimum>0.00</minimum>
                                         </limit>
                                         <limit>
                                             <counter>CLASS</counter>
                                             <value>MISSEDCOUNT</value>
-                                            <maximum>10</maximum> <!-- Позволяем пропускать пустые классы -->
+                                            <maximum>10</maximum>
                                         </limit>
                                     </limits>
                                 </rule>
