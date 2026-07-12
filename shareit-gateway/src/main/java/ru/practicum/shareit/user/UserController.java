@@ -43,7 +43,7 @@ public class UserController {
     }
 
     @GetMapping(("/{userId}"))
-    public ResponseEntity<Object> findById(@PathVariable Long userId) {
+    public ResponseEntity<Object> findById(@PathVariable @Positive Long userId) {
         return userClient.findById(userId);
     }
 

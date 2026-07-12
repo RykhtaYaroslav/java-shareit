@@ -26,7 +26,7 @@ public class ErrorHandler {
 
     @ExceptionHandler(IllegalBookingStateException.class)
     @ResponseStatus(HttpStatus.BAD_REQUEST)
-    public Map<String, String> handleIllegalArgument(final IllegalArgumentException e) {
+    public Map<String, String> handleIllegalArgument(final IllegalBookingStateException e) {
         return Map.of("error", e.getMessage());
     }
 
