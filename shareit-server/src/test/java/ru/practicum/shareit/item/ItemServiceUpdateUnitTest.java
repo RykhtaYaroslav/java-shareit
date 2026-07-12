@@ -104,10 +104,10 @@ class ItemServiceUpdateUnitTest {
 
         NotFoundException e = Assertions.assertThrows(NotFoundException.class, () -> itemService.update(wrongUserId, itemId, request));
 
-        Assertions.assertEquals
-                (String.format(
-                        "У пользователя с id=%d нет доступа к редактированию предмета с id=%d", wrongUserId, itemId
-                ), e.getMessage());
+        Assertions.assertEquals(
+                String.format(
+                        "У пользователя с id=%d нет доступа к редактированию предмета с id=%d", wrongUserId, itemId),
+                e.getMessage());
 
         Mockito.verify(userRepositoryMock, Mockito.times(1)).findById(wrongUserId);
         Mockito.verifyNoMoreInteractions(userRepositoryMock);

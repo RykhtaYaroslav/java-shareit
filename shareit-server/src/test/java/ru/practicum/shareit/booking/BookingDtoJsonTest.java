@@ -56,6 +56,7 @@ class BookingDtoJsonTest {
         assertThat(result).extractingJsonPathStringValue("$.start").isEqualTo("2026-07-12T14:00:00");
     }
 
+    @SuppressWarnings("checkstyle:RegexpSinglelineJava")
     @DisplayName("Десериализация JSON в BookingDto")
     @Test
     void testDeserialize() throws Exception {
