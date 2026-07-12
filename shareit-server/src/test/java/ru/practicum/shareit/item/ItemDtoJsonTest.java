@@ -67,6 +67,7 @@ class ItemDtoJsonTest {
         assertThat(result).extractingJsonPathStringValue("$.comments[0].created").isEqualTo("2026-07-12T12:00:00");
     }
 
+    @SuppressWarnings("checkstyle:RegexpSinglelineJava")
     @DisplayName("Десериализация JSON в ItemDto")
     @Test
     void testDeserialize() throws Exception {
