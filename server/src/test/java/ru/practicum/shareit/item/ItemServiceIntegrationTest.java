@@ -144,9 +144,7 @@ class ItemServiceIntegrationTest {
         return Stream.of(
                 Arguments.of("Поиск по названию", "item", 1),
                 Arguments.of("Поиск по описанию", "description", 1),
-                Arguments.of("Запрос не совпадает ни с чем", "abracadabra", 0),
-                Arguments.of("Пустой запрос", "", 0),
-                Arguments.of("Запрос из пробелов", "   ", 0)
+                Arguments.of("Запрос не совпадает ни с чем", "abracadabra", 0)
         );
     }
 

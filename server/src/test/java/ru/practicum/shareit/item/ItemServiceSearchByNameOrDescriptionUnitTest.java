@@ -99,21 +99,6 @@ class ItemServiceSearchByNameOrDescriptionUnitTest {
         Mockito.verifyNoInteractions(userRepositoryMock, bookingRepositoryMock, itemRequestRepositoryMock);
     }
 
-    @DisplayName("Возврат пустого списка, если строка поиска пустая или состоит только из пробелов")
-    @ParameterizedTest
-    @ValueSource(strings = {"", " ", "   "})
-    void shouldReturnEmptyListWhenSearchTextIsBlank(String blankSearchText) {
-        // ВЫЗОВ МЕТОДА
-        //
-        List<ItemDto> result = itemService.searchByNameOrDescription(blankSearchText);
-
-        // ПРОВЕРКА РЕЗУЛЬТАТОВ
-        //
-        assertThat(result).isEmpty();
-        // Ни один репозиторий не должен вызываться, метод завершается на первой строчке
-        Mockito.verifyNoInteractions(userRepositoryMock, itemRepositoryMock, commentRepositoryMock, bookingRepositoryMock, itemRequestRepositoryMock);
-    }
-
     @DisplayName("Возврат пустого списка, если по ключевому слову ничего не найдено")
     @Test
     void shouldReturnEmptyListWhenNothingFoundInRepository() {

@@ -16,6 +16,8 @@ import ru.practicum.shareit.item.dto.CommentRequestDto;
 import ru.practicum.shareit.item.dto.ItemDtoCreateRequest;
 import ru.practicum.shareit.item.dto.ItemDtoUpdateRequest;
 
+import java.util.Collections;
+
 @RestController
 @RequestMapping("/items")
 @RequiredArgsConstructor
@@ -55,6 +57,9 @@ public class ItemController {
 
     @GetMapping("/search")
     public ResponseEntity<Object> findAllByNameOrDescriptionContainingIgnoreCase(@RequestParam String text) {
+        if (text.isBlank()){
+            return ResponseEntity.ok(Collections.emptyList());
+        }
         return itemClient.searchByNameOrDescription(text);
     }
 }

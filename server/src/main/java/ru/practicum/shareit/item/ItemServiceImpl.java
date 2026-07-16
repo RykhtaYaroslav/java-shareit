@@ -110,10 +110,6 @@ public class ItemServiceImpl implements ItemService {
     @Override
     @Transactional(readOnly = true)
     public List<ItemDto> searchByNameOrDescription(String text) {
-        if (text.isBlank()) {
-            return Collections.emptyList();
-        }
-
         List<Item> items = itemRepository.findAllByNameContainingIgnoreCaseOrDescriptionContainingIgnoreCase(text, text);
         List<Long> itemIds = items.stream().map(Item::getId).toList();
 
