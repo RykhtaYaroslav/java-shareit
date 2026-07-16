@@ -57,7 +57,7 @@ public class ItemController {
 
     @GetMapping("/search")
     public ResponseEntity<Object> findAllByNameOrDescriptionContainingIgnoreCase(@RequestParam String text) {
-        if (text.isBlank()){
+        if (text.isBlank()) {
             return ResponseEntity.ok(Collections.emptyList());
         }
         return itemClient.searchByNameOrDescription(text);
